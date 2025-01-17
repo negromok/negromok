@@ -1,0 +1,108 @@
+-- Decompiler will be improved soon!
+-- Decompiled with Konstant V2.1, a fast Luau decompiler made in Luau by plusgiant5 (https://discord.gg/wyButjTMhM)
+-- Decompiled on 2025-01-16 22:00:31
+-- Luau version 6, Types version 3
+-- Time taken: 0.002554 seconds
+
+local LocalPlayer_upvr = game.Players.LocalPlayer
+repeat
+	wait()
+until LocalPlayer_upvr.Character
+local Character_upvr = LocalPlayer_upvr.Character
+local Humanoid_upvr = Character_upvr:WaitForChild("Humanoid")
+local Parent_upvr = script.Parent
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Weight = ReplicatedStorage:WaitForChild("gameAnims"):WaitForChild("Tools"):WaitForChild("Weight")
+local any_LoadAnimation_result1_upvr_2 = Humanoid_upvr:LoadAnimation(Weight:WaitForChild("idle"))
+local any_LoadAnimation_result1_upvr = Humanoid_upvr:LoadAnimation(Weight:WaitForChild("rep"))
+local ownedGamepasses_upvr = LocalPlayer_upvr:WaitForChild("ownedGamepasses")
+local function _() -- Line 26, Named "checkForDoubleSpeed"
+	--[[ Upvalues[1]:
+		[1]: ownedGamepasses_upvr (readonly)
+	]]
+	if ownedGamepasses_upvr:FindFirstChild("x2 Rep Time") ~= nil then
+		return true
+	end
+	return false
+end
+local tbl_upvr = {any_LoadAnimation_result1_upvr_2, any_LoadAnimation_result1_upvr}
+local module = require(ReplicatedStorage:WaitForChild("globalFunctions"))
+local repTime_upvr = Parent_upvr:WaitForChild("repTime")
+local calculateUltimateRepTime_upvr = module.calculateUltimateRepTime
+local calculatePetRepTimeBoost_upvr = module.calculatePetRepTimeBoost
+local var20_upvw = 0
+local muscleEvent_upvr = LocalPlayer_upvr:WaitForChild("muscleEvent")
+local function toolActivated_upvr() -- Line 60, Named "toolActivated"
+	--[[ Upvalues[9]:
+		[1]: repTime_upvr (readonly)
+		[2]: ownedGamepasses_upvr (readonly)
+		[3]: calculateUltimateRepTime_upvr (readonly)
+		[4]: LocalPlayer_upvr (readonly)
+		[5]: calculatePetRepTimeBoost_upvr (readonly)
+		[6]: Humanoid_upvr (readonly)
+		[7]: var20_upvw (read and write)
+		[8]: any_LoadAnimation_result1_upvr (readonly)
+		[9]: muscleEvent_upvr (readonly)
+	]]
+	local var26 = repTime_upvr
+	local Value = var26.Value
+	if ownedGamepasses_upvr:FindFirstChild("x2 Rep Time") ~= nil then
+		var26 = true
+	else
+		var26 = false
+	end
+	if var26 == true then
+		Value /= 2
+	end
+	local var28 = Value - Value * calculateUltimateRepTime_upvr(LocalPlayer_upvr)
+	if 0 < Humanoid_upvr.Health then
+		local tick_result1 = tick()
+		local var30
+		if var28 - var28 * calculatePetRepTimeBoost_upvr(LocalPlayer_upvr) <= var30 then
+			var30 = tick()
+			var20_upvw = var30
+			var30 = 1
+			if ownedGamepasses_upvr:FindFirstChild("x2 Rep Time") ~= nil then
+				tick_result1 = true
+			else
+				tick_result1 = false
+			end
+			if tick_result1 == true then
+				var30 = 2
+			end
+			tick_result1 = any_LoadAnimation_result1_upvr:Play
+			tick_result1(0.1, 1, var30)
+			tick_result1 = muscleEvent_upvr:FireServer
+			tick_result1("rep")
+		end
+	end
+end
+Parent_upvr.Equipped:Connect(function() -- Line 44, Named "toolEquipped"
+	--[[ Upvalues[1]:
+		[1]: any_LoadAnimation_result1_upvr_2 (readonly)
+	]]
+	any_LoadAnimation_result1_upvr_2:Play()
+end)
+Parent_upvr.Unequipped:Connect(function() -- Line 48, Named "toolUnequipped"
+	--[[ Upvalues[1]:
+		[1]: tbl_upvr (readonly)
+	]]
+	for _, v in pairs(tbl_upvr) do
+		v:Stop()
+	end
+end)
+Parent_upvr.Activated:Connect(toolActivated_upvr)
+local autoLiftEnabled_upvr = LocalPlayer_upvr:WaitForChild("autoLiftEnabled")
+spawn(function() -- Line 95
+	--[[ Upvalues[4]:
+		[1]: autoLiftEnabled_upvr (readonly)
+		[2]: Parent_upvr (readonly)
+		[3]: Character_upvr (readonly)
+		[4]: toolActivated_upvr (readonly)
+	]]
+	while wait() do
+		if autoLiftEnabled_upvr.Value == true and Parent_upvr ~= nil and Parent_upvr.Parent ~= nil and Parent_upvr.Parent == Character_upvr then
+			toolActivated_upvr()
+		end
+	end
+end)
